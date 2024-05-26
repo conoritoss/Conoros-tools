@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Crypto Wallet Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Hide overflow to ensure the text fills the entire page */
+            position: relative;
+        }
+        .wallet-container {
+            text-align: center;
+            position: relative;
+            z-index: 1; /* Ensure text is above the background */
+        }
+        .moving-text {
+            color: red;
+            font-size: 48px; /* Larger font size */
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap; /* Prevent line breaks */
+            z-index: 1; /* Ensure text is above the background */
+        }
+        .stop-text {
+            color: green;
+            font-size: 24px;
+            display: none;
+            z-index: 1; /* Ensure text is above the background */
+        }
+        .amount {
+            color: green;
+            font-size: 24px;
+            margin-top: 20px;
+            display: none;
+            z-index: 1; /* Ensure text is above the background */
+        }
+        @keyframes moveText {
+            0% {
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                transform: translateX(-50%) translateY(100vh);
+            }
+        }
+        .background-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0; /* Behind the text */
+        }
+        .background-text span {
+            position: absolute;
+            font-size: 14px; /* Adjust font size as needed */
+            opacity: 0.3; /* Adjust opacity */
+            animation: animateBackground 30s linear infinite;
+            transform: translateY(-100%);
+            white-space: nowrap; /* Prevent line breaks */
+        }
+        @keyframes animateBackground {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-text" id="backgroundText">
+        <!-- This will be populated by JavaScript with random letters and numbers -->
+    </div>
+
+    <div class="wallet-container">
+        <div class="moving-text" id="movingText">
+            <!-- This will be populated by JavaScript with random letters and numbers -->
+        </div>
+        <div class="stop-text" id="stopText">
+            Crypto Wallet Found!
+        </div>
+        <div class="amount" id="amount">
+            Amount: $27,300 Message Realconoro for help to withdraw it
+        </div>
+    </div>
+
+    <script>
+        // Function to generate random letters and numbers for background text
+        function generateRandomBackgroundText() {
+            let text = '';
+            const possibleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+            for (let i = 0; i < 500; i++) { // Generate a large number of characters
+                text += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+            }
+
+            return text;
+        }
+
+        // Function to populate background text
+        function populateBackgroundText() {
+            const backgroundText = document.getElementById('backgroundText');
+            backgroundText.innerHTML = '';
+
+            const text = generateRandomBackgroundText();
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.textContent = text[i];
+                backgroundText.appendChild(span);
+            }
+        }
+
+        // Function to generate random letters and numbers for moving text
+        function generateRandomText() {
+            let text = '';
+            const possibleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+            for (let i = 0; i < 20; i++) {
+                text += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+            }
+
+            return text;
+        }
+
+        let intervalId = null;
+        let isStopped = false;
+
+        // Function to start the animation
+        function startAnimation() {
+            const movingText = document.getElementById('movingText');
+            const stopText = document.getElementById('stopText');
+            const amount = document.getElementById('amount');
+
+            movingText.textContent = generateRandomText();
+            movingText.style.display = 'block';
+            stopText.style.display = 'none';
+            amount.style.display = 'none';
+
+            // Start animation
+            intervalId = setInterval(function() {
+                movingText.textContent = generateRandomText();
+            }, 100);
+
+            isStopped = false;
+        }
+
+        // Function to stop the animation
+        function stopAnimation() {
+            const movingText = document.getElementById('movingText');
+            const stopText = document.getElementById('stopText');
+            const amount = document.getElementById('amount');
+
+            clearInterval(intervalId);
+
+            movingText.style.display = 'none';
+            stopText.style.display = 'block';
+            amount.style.display = 'block';
+
+            isStopped = true;
+        }
+
+        // Event listener for space bar press
+        document.addEventListener('keydown', function(event) {
+            if (event.keyCode === 32) { // 32 is the keycode for spacebar
+                if (!isStopped) {
+                    stopAnimation();
+                } else {
+                    startAnimation();
+                }
+            }
+        });
+
+        // Start animation and populate background text initially
+        startAnimation();
+        populateBackgroundText();
+    </script>
+</body>
+</html>

